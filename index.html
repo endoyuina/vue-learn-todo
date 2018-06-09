@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>todo list</title>
+</head>
+<body>
+    <div id="app" class="container">
+        <h1>Todo</h1>
+        <!--  v-modelでデータをバインディング -->
+        <input type="text" v-model="new_task">
+        <button v-on:click="add">add</button>
+        <button v-on:click="checkDelete">checkedDelete</button>
+        <ul>
+            <li v-for="item in items">
+                <lavel class="todo" v-bind:class="{  active: item.isChecked }">
+                   <input type="checkbox" v-model="item.isChecked">
+                   {{ item.title }}
+                </lavel>
+            </li>
+        </ul>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue "></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            new_task: '',
+            items: [
+                { title: 'Task1', isChecked: false },
+                { title: 'Task2', isChecked: false },
+                { title: 'Task3', isChecked: false },
+            ]
+        },
+        methods: {
+            add: function(event) {
+                if (this.new_task !== "") {
+                    this.items.push({
+                        title: this.new_task,
+                        isChecked: false
+                    });
+                    this.new_task = "";
+                    this.saveTodo();
+                }
+            },
+            checkDelete: function() {
+                this.items = this.items.filter(function(item) {
+                    return item.isChecked == false;
+                });
+                this.saveTodo();
+            },
+            saveTodo: function() {
+                localStorage.setItem('items', JSON.stringify(this.items));
+            },
+            loadTodo: function() {
+                this.items = JSON.parse( localStorage.getItem('items') );
+                if (!this.items) {
+                    this.items = [];
+                }
+            },
+        },
+　      //データをブラウザから読み出し 　      
+        mounted: function() {
+            this.loadTodo();
+        },
+    })
+</script>
+<style>
+    body {
+        font-size: 16px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+
+    .container{
+        width:300px;
+        margin:auto;
+    }
+
+    #app h1 {
+        font-size: 16px;
+        border-bottom: 1px solid #ddd;
+        padding: 16px 0;
+    }
+
+    #app input[type="text"] {
+        padding: 2px;
+    }
+
+    .todo:hover {
+        cursor: pointer;
+        border: 1px outset #eef;
+        background: #eef;
+    }
+
+    .active { 
+        text-decoration: line-through; 
+    }
+
+    li {
+        list-style: none;
+    }
+</style>
+</body>
+</html>
